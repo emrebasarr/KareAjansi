@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="my-4">Organizasyon Güncelle</h1>
+
+<form id="organizasyonGuncelleForm">
+    <div class="form-group">
+        <label for="ad">Ad:</label>
+        <input type="text" class="form-control" id="ad" name="ad" required>
+    </div>
+    <div class="form-group">
+        <label for="BaslangicTarihi">Başlangıç Tarihi:</label>
+        <input type="text" class="form-control" id="BaslangicTarihi" name="BaslangicTarihi" required>
+    </div>
+    <div class="form-group">
+        <label for="BitisTarihi">Bitiş Tarihi:</label>
+        <input type="text" class="form-control" id="BitisTarihi" name="BitisTarihi" required>
+    </div>
+    <div class="form-group">
+        <label for="Sehir">Şehir:</label>
+        <input type="text" class="form-control" id="Sehir" name="Sehir" required>
+    </div>
+    <div class="form-group">
+        <label for="Firma">Firma:</label>
+        <input type="text" class="form-control" id="Firma" name="Firma" required>
+    </div>
+    <div class="form-group">
+        <label for="GunSayisi">Gün Sayısı:</label>
+        <input type="text" class="form-control" id="GunSayisi" name="GunSayisi" required>
+    </div>
+    <button type="button" class="btn btn-primary" id="organizasyonGuncelleButton">Organizasyon Güncelle</button>
+</form>
+
+<!-- Uyarı mesajları için alan -->
+<div id="uyariMesaj" class="text-danger"></div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var organizasyonId = window.location.pathname.split('/').pop();
+            $("#organizasyonGuncelleButton").click(function () {
+                var organizasyonUpdate = {
+                    id: organizasyonId,
+                    ad: $("#ad").val(),
+                    BaslangicTarihi: moment($("#BaslangicTarihi").val(), "DD.MM.YYYY").format("YYYY-MM-DD"),
+                    BitisTarihi: moment($("#BitisTarihi").val(), "DD.MM.YYYY").format("YYYY-MM-DD"),
+                    Sehir: $("#Sehir").val(),
+                    Firma: $("#Firma").val(),
+                    GunSayisi: $("#GunSayisi").val()
+                };
+
+                $.ajax({
+                    url: `https://localhost:7254/api/Organizasyonlar/updateorganizasyon`,
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(organizasyonUpdate),
+                    success: function (data) {
+                        alert("Organizasyon başarıyla güncellendi.");
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        alert("Organizasyon güncellenirken bir hata oluştu.");
+                    }
+                });
+            });
+        });
+    </script>
+}

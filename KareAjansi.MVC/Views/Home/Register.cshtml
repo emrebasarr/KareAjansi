@@ -1,0 +1,47 @@
+﻿@model KareAjansi.MVC.Models.ViewModels.RegisterVM
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-6 mx-auto">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Kullanıcı Bilgileri</h2>
+        </div>
+        <form method="post">
+            <div class="card-body">
+                @if (TempData["Error"] != null)
+                {
+                    @foreach (var item in TempData["Error"] as List<string>)
+                    {
+                        <span>@item</span>
+                    }
+                }
+                <div class="form-group">
+                    <label>Kullanıcı Ad</label>
+                    <input type="text" class="form-control" placeholder="Kullanıcı Adı Giriniz" asp-for="Username">
+                    <span asp-validation-for="Username"></span>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" placeholder="Email Giriniz" asp-for="Email">
+                    <span asp-validation-for="Email"></span>
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" class="form-control" placeholder="Şifre giriniz" asp-for="Password">
+                    <span asp-validation-for="Password"></span>
+                </div>
+                <div class="form-group">
+                    <label>Şifre(Tekrar Giriniz)</label>
+                    <input type="password" class="form-control" placeholder="Şifre(Tekrar) Giriniz" asp-for="ConfirmPassword">
+                    <span asp-validation-for="ConfirmPassword"></span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Kullanıcı Oluştur</button>
+            </div>
+        </form>
+    </div>
+</div>

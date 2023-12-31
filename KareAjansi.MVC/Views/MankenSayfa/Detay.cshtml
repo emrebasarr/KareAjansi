@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Manken Detay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Manken Detay</h1>
+
+<td>
+    <img src="https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg" width="60" height="60" />
+</td>
+
+<ul id="mankenDetayListesi">
+</ul>
+
+<div class="row mt-3">
+    <div class="col">
+        <button class="btn btn-danger mr-2" id="deleteButton">Sil</button>
+        <a class="btn btn-primary" id="updateButton" href="#">Güncelle</a>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function getMankenDetay(mankenId) {
+                $.ajax({
+                    url: `https://localhost:7254/api/Mankenler/getmanken/${mankenId}`,
+                    type: "GET",
+                    success: function (data) {
+                        fillMankenDetay(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function fillMankenDetay(manken) {
+                const mankenDetayListesi = $("#mankenDetayListesi");
+                mankenDetayListesi.empty(); // Önceki verileri temizle
+                const detayHtml = `
+                                   <li><strong>ID:</strong> ${manken.id}</li>
+                                    <li><strong>Ad:</strong> ${manken.ad}</li>
+                                    <li><strong>Soyad:</strong> ${manken.soyad}</li>
+                                    <li><strong>Adres:</strong> ${manken.adres}</li>
+                                    <li><strong>Tel1:</strong> ${manken.tel1}</li>
+                                    <li><strong>Tel2:</strong> ${manken.tel2}</li>
+                                    <li><strong>Ayakkabi No:</strong> ${manken.ayakkabiNo}</li>
+                                    <li><strong>Beden:</strong> ${manken.beden}</li>
+                                    <li><strong>Kilo:</strong> ${manken.kilo}</li>
+                                    <li><strong>Sac Rengi:</strong> ${manken.sacRengi}</li>
+                                    <li><strong>Goz Rengi:</strong> ${manken.gozRengi}</li>
+                                    <li><strong>Sehir Disi Calisabilme Durumu:</strong> ${manken.sehirDisiCalisabilmeDurumu ? 'Evet' : 'Hayır'}</li>
+                                    <li><strong>Ehliyet:</strong> ${manken.ehliyet ? 'Evet' : 'Hayır'}</li>
+                                    <li><strong>Yabanci Dil:</strong> ${manken.yabanciDil}</li>
+                                    <li><strong>Cinsiyet:</strong> ${manken.cinsiyet}</li>
+                                    <li><strong>Ozellik:</strong> ${manken.ozellik}</li>
+                                    <li><strong>Kategori ID:</strong> ${manken.kategoriId}</li>
+                                    <li><strong>Durum:</strong> ${manken.status}</li>
+                                `;
+                mankenDetayListesi.append(detayHtml);
+
+                // Güncelleme butonuna tıklanma olayını ekle
+                $("#updateButton").on("click", function () {
+                    redirectToGuncelle(manken.id);
+                });
+            }
+            // Sayfa yüklendiğinde URL'den manken ID'sini al
+            const mankenId = window.location.pathname.split('/').pop();
+            getMankenDetay(mankenId);
+
+            // Silme butonuna tıklanma olayını ekle
+            $("#deleteButton").on("click", function () {
+                if (confirm("Manken silinsin mi?")) {
+                    deleteManken(mankenId);
+                }
+            });
+            function deleteManken(id) {
+                if (confirm("Manken silinsin mi?")) {
+                    $.ajax({
+                        url: `https://localhost:7254/api/Mankenler/deletemanken/${id}`,
+                        type: "DELETE",
+                        success: function (data) {
+                            alert("Manken başarıyla silindi.");
+                            // Sayfayı yenile
+                            location.reload();
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            alert("Manken silinirken bir hata oluştu.");
+                        }
+                    });
+                }
+            }
+            function redirectToGuncelle(id) {
+                // Güncelleme sayfasına yönlendir
+                window.location.href = `/MankenSayfa/Guncelle?id=${id}`;
+            }
+        });
+    </script>
+}

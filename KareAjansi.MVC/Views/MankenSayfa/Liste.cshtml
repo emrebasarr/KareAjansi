@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Manken Liste";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="container">
+    <section>
+        <div class="card">
+            <div class="card-header text-center">
+                <h1>Mankenler Listesi</h1>
+                <input id="search"
+                       class="form-control"
+                       type="search"
+                       placeholder="Manken Ara"
+                       aria-label="Search" />
+            </div>
+            <div class="card-body">
+                <div class="card-body">
+                    <div class="mb-3 text-center">
+                        <a class="btn btn-primary" href="/MankenSayfa/Ekle">Manken Ekle</a>
+                    </div>
+                <table class="table table-hover" id="mankenTable">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Ad</th>
+                            <th>Soyad</th>
+                            <th>KategoriId</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mankenTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function getallMankenler() {
+                $.ajax({
+                    url: "https://localhost:7254/api/Mankenler/getallmankenler",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data);
+                        fillTableMankenData(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function getMankenBySearch(value) {
+                $.ajax({
+                    url: `https://localhost:7254/api/Mankenler/searchmanken/${value}`,
+                    type: 'GET',
+                    success: function (data) {
+                        // Temizleme işlemi
+                        $("#mankenTableBody").empty();
+                        fillTableMankenData(data);
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function fillTableMankenData(mankenler) {
+                const mankenTableBody = $("#mankenTableBody");
+                mankenTableBody.empty(); // Tabloyu temizle
+                mankenler.forEach(function (val, i) {
+                    const tr = `
+                                        <tr>
+                                            <td>${val.id}</td>
+                                            <td>${val.ad}</td>
+                                            <td>${val.soyad}</td>
+                                            <td>${val.kategoriId}</td>
+                                            <td>
+                                                <a href="/MankenSayfa/Detay/${val.id}" class="btn btn-info">Detaylar</a>
+                                            </td>
+                                        </tr>
+                                    `;
+                    mankenTableBody.append(tr);
+                });
+            }
+
+            $("#search").on("input", function (e) {
+                const value = e.target.value;
+                getMankenBySearch(value);
+            });
+
+            $("#mankenEkleBtn").on("click", function () {
+                window.location.href = "/MankenSayfa/mankenEkle";
+            });
+
+            // Sayfa yüklendiğinde tüm mankenleri getir
+            getallMankenler();
+        });
+    </script>
+}

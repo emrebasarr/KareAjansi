@@ -1,0 +1,144 @@
+﻿@{
+    ViewData["Title"] = "Manken Ekle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 class="my-4">Yeni Manken Ekleme</h1>
+
+<form id="mankenEkleForm">
+    <div class="form-group">
+        <label for="ad">Ad:</label>
+        <input type="text" class="form-control" id="ad" name="ad">
+    </div>
+    <div class="form-group">
+        <label for="soyad">Soyad:</label>
+        <input type="text" class="form-control" id="soyad" name="soyad">
+    </div>
+    <div class="form-group">
+        <label for="adres">Adres:</label>
+        <input type="text" class="form-control" id="adres" name="adres">
+    </div>
+    <div class="form-group">
+        <label for="tel1">Tel1:</label>
+        <input type="text" class="form-control" id="tel1" name="tel1">
+    </div>
+    <div class="form-group">
+        <label for="tel2">Tel2:</label>
+        <input type="text" class="form-control" id="tel2" name="tel2">
+    </div>
+    <div class="form-group">
+        <label for="ayakkabiNo">AyakkabiNo:</label>
+        <input type="text" class="form-control" id="ayakkabiNo" name="ayakkabiNo">
+    </div>
+    <div class="form-group">
+        <label for="beden">Beden:</label>
+        <input type="text" class="form-control" id="beden" name="beden">
+    </div>
+    <div class="form-group">
+        <label for="kilo">Kilo:</label>
+        <input type="text" class="form-control" id="kilo" name="kilo">
+    </div>
+    <div class="form-group">
+        <label for="sacRengi">SacRengi:</label>
+        <input type="text" class="form-control" id="sacRengi" name="sacRengi">
+    </div>
+    <div class="form-group">
+        <label for="gozRengi">GozRengi:</label>
+        <input type="text" class="form-control" id="gozRengi" name="gozRengi">
+    </div>
+    <div class="form-group">
+        <label for="sehirDisiCalisabilmeDurumu">Şehir Dışı Çalışabilme Durumu:</label>
+        <input type="checkbox" class="form-check-input" id="sehirDisiCalisabilmeDurumu" name="sehirDisiCalisabilmeDurumu">
+    </div>
+    <div class="form-group">
+        <label for="ehliyet">Ehliyet:</label>
+        <input type="checkbox" class="form-check-input" id="ehliyet" name="ehliyet">
+    </div>
+    <div class="form-group">
+        <label for="yabanciDil">Yabancı Dil:</label>
+        <input type="text" class="form-control" id="yabanciDil" name="yabanciDil">
+    </div>
+    <div class="form-group">
+        <label for="ozellik">Özellik:</label>
+        <input type="text" class="form-control" id="ozellik" name="ozellik">
+    </div>
+    <div class="form-group">
+        <label for="cinsiyet">Cinsiyet:</label>
+        <input type="text" class="form-control" id="cinsiyet" name="cinsiyet">
+    </div>
+    <div class="form-group">
+        <label for="kategoriId">Kategori ID:</label>
+        <input type="text" class="form-control" id="kategoriId" name="kategoriId">
+    </div>
+
+    <button type="button" class="btn btn-primary" onclick="mankenEkle()">Manken Ekle</button>
+</form>
+
+<!-- Uyarı mesajları için alan -->
+<div id="uyariMesaj" class="text-danger"></div>
+
+@section scripts {
+    <script>
+        function mankenEkle() {
+            var ad = $("#ad").val();
+            var soyad = $("#soyad").val();
+            var tel1 = $("#tel1").val();
+            var tel2 = $("#tel2").val();
+            var adres = $("#adres").val();
+            var ayakkabiNo = $("#ayakkabiNo").val();
+            var beden = $("#beden").val();
+            var kilo = $("#kilo").val();
+            var sacRengi = $("#sacRengi").val();
+            var gozRengi = $("#gozRengi").val();
+            var sehirDisiCalisabilmeDurumu = $("#sehirDisiCalisabilmeDurumu").prop("checked");
+            var ehliyet = $("#ehliyet").prop("checked");
+            var yabanciDil = $("#yabanciDil").val();
+            var ozellik = $("#ozellik").val();
+            var cinsiyet = $("#cinsiyet").val();
+            var kategoriId = $("#kategoriId").val();
+
+            // Giriş doğrulaması
+            if (!ad || !soyad || !tel1 || !tel2 || !kilo) {
+                $("#uyariMesaj").text("Zorunlu alanları doldurmalısınız: Ad, Soyad, Tel1, Tel2, Kilo");
+                return;
+            }
+
+            // Uyarıyı temizle
+            $("#uyariMesaj").text("");
+
+            var mankenDTO = {
+                ad: ad,
+                soyad: soyad,
+                adres: adres,
+                tel1: tel1,
+                tel2: tel2,
+                ayakkabiNo: ayakkabiNo,
+                beden: beden,
+                kilo: kilo,
+                sacRengi: sacRengi,
+                gozRengi: gozRengi,
+                sehirDisiCalisabilmeDurumu: sehirDisiCalisabilmeDurumu,
+                ehliyet: ehliyet,
+                yabanciDil: yabanciDil,
+                ozellik: ozellik,
+                cinsiyet: cinsiyet,
+                kategoriId: kategoriId
+            };
+
+            $.ajax({
+                url: "https://localhost:7254/api/Mankenler/addmanken",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(mankenDTO),
+                success: function (data) {
+                    alert("Manken başarıyla eklendi.");
+                    // Sayfayı yenile
+                    window.location.reload();
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("Manken eklenirken bir hata oluştu.");
+                }
+            });
+        }
+    </script>
+}

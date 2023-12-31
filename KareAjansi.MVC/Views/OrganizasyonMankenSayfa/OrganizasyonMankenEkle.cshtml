@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "OrganizasyonManken Ekle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="my-4">OrganizasyonManken Ekle</h1>
+
+<main class="container">
+    <section>
+        <div class="card">
+            <div class="card-body">
+                <form id="organizasyonMankenEkleForm">
+                    <div class="form-group">
+                        <label for="organizasyonId">Organizasyon Id:</label>
+                        <input type="text" class="form-control" id="organizasyonId" name="organizasyonId">
+                    </div>
+                    <div class="form-group">
+                        <label for="mankenId">Manken Id:</label>
+                        <input type="text" class="form-control" id="mankenId" name="mankenId">
+                    </div>
+                    <div class="form-group">
+                        <label for="katilmaTarihi">Katılma Tarihi:</label>
+                        <input type="text" class="form-control" id="katilmaTarihi" name="katilmaTarihi">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="organizasyonMankenEkle()">OrganizasyonManken Ekle</button>
+                </form>
+
+                <!-- Uyarı mesajları için alan -->
+                <div id="uyariMesaj" class="text-danger"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        function organizasyonMankenEkle() {
+            var organizasyonId = $("#organizasyonId").val();
+            var mankenId = $("#mankenId").val();
+            var katilmaTarihi = moment($("#katilmaTarihi").val(), "DD.MM.YYYY").format("YYYY-MM-DD");
+
+            // Giriş doğrulaması
+            if (!organizasyonId || !mankenId || !katilmaTarihi) {
+                $("#uyariMesaj").text("Zorunlu alanları doldurmalısınız: Organizasyon Id, Manken Id, Katılma Tarihi");
+                return;
+            }
+
+            // Uyarıyı temizle
+            $("#uyariMesaj").text("");
+
+            var organizasyonMankenDTO = {
+                OrganizasyonId: organizasyonId,
+                MankenId: mankenId,
+                KatilmaTarihi: katilmaTarihi,
+            };
+
+            $.ajax({
+                url: "https://localhost:7254/api/OrganizasyonMankenler/addorganizasyonmanken",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(organizasyonMankenDTO),
+                success: function (data) {
+                    alert("OrganizasyonManken başarıyla eklendi.");
+                    // Sayfayı yenile
+                    window.location.reload();
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("OrganizasyonManken eklenirken bir hata oluştu.");
+                }
+            });
+        }
+    </script>
+}

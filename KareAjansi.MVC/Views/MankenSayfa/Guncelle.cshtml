@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "Manken Güncelle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="my-4">Manken Güncelleme</h1>
+
+<form id="mankenGuncelleForm">
+    <div class="form-group">
+        <label for="id">Id:</label>
+        <input type="text" class="form-control" id="id" name="id" required>
+    </div>
+    <div class="form-group">
+        <label for="ad">Ad:</label>
+        <input type="text" class="form-control" id="ad" name="ad" required>
+    </div>
+    <div class="form-group">
+        <label for="soyad">Soyad:</label>
+        <input type="text" class="form-control" id="soyad" name="soyad" required>
+    </div>
+    <div class="form-group">
+        <label for="adres">Adres:</label>
+        <input type="text" class="form-control" id="adres" name="adres">
+    </div>
+    <div class="form-group">
+        <label for="tel1">Tel1:</label>
+        <input type="text" class="form-control" id="tel1" name="tel1" required>
+    </div>
+    <div class="form-group">
+        <label for="tel2">Tel2:</label>
+        <input type="text" class="form-control" id="tel2" name="tel2" required>
+    </div>
+    <div class="form-group">
+        <label for="ayakkabiNo">AyakkabiNo:</label>
+        <input type="text" class="form-control" id="ayakkabiNo" name="ayakkabiNo">
+    </div>
+    <div class="form-group">
+        <label for="beden">Beden:</label>
+        <input type="text" class="form-control" id="beden" name="beden">
+    </div>
+    <div class="form-group">
+        <label for="kilo">Kilo:</label>
+        <input type="text" class="form-control" id="kilo" name="kilo" required>
+    </div>
+    <div class="form-group">
+        <label for="sacRengi">SacRengi:</label>
+        <input type="text" class="form-control" id="sacRengi" name="sacRengi">
+    </div>
+    <div class="form-group">
+        <label for="gozRengi">GozRengi:</label>
+        <input type="text" class="form-control" id="gozRengi" name="gozRengi">
+    </div>
+    <div class="form-group">
+        <label for="sehirDisiCalisabilmeDurumu">Şehir Dışı Çalışabilme Durumu:</label>
+        <input type="checkbox" class="form-check-input" id="sehirDisiCalisabilmeDurumu" name="sehirDisiCalisabilmeDurumu">
+    </div>
+    <div class="form-group">
+        <label for="ehliyet">Ehliyet:</label>
+        <input type="checkbox" class="form-check-input" id="ehliyet" name="ehliyet">
+    </div>
+    <div class="form-group">
+        <label for="yabanciDil">Yabancı Dil:</label>
+        <input type="text" class="form-control" id="yabanciDil" name="yabanciDil">
+    </div>
+    <div class="form-group">
+        <label for="ozellik">Özellik:</label>
+        <input type="text" class="form-control" id="ozellik" name="ozellik">
+    </div>
+    <div class="form-group">
+        <label for="cinsiyet">Cinsiyet:</label>
+        <input type="text" class="form-control" id="cinsiyet" name="cinsiyet">
+    </div>
+    <div class="form-group">
+        <label for="kategoriId">Kategori ID:</label>
+        <input type="text" class="form-control" id="kategoriId" name="kategoriId">
+    </div>
+
+    <button type="button" class="btn btn-primary" id="mankenGuncelleButton">Mankeni Güncelle</button>
+</form>
+
+<!-- Uyarı mesajları için alan -->
+<div id="uyariMesaj" class="text-danger"></div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#mankenGuncelleButton").click(function () {
+                var updatedManken = {
+                    id: $("#id").val(),
+                    ad: $("#ad").val(),
+                    soyad: $("#soyad").val(),
+                    adres: $("#adres").val(),
+                    tel1: $("#tel1").val(),
+                    tel2: $("#tel2").val(),
+                    ayakkabiNo: $("#ayakkabiNo").val(),
+                    beden: $("#beden").val(),
+                    kilo: $("#kilo").val(),
+                    sacRengi: $("#sacRengi").val(),
+                    gozRengi: $("#gozRengi").val(),
+                    sehirDisiCalisabilmeDurumu: $("#sehirDisiCalisabilmeDurumu").prop("checked"),
+                    ehliyet: $("#ehliyet").prop("checked"),
+                    yabanciDil: $("#yabanciDil").val(),
+                    ozellik: $("#ozellik").val(),
+                    cinsiyet: $("#cinsiyet").val(),
+                    kategoriId: $("#kategoriId").val()
+                };
+
+                $.ajax({
+                    url: `https://localhost:7254/api/Mankenler/updatemanken`,
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(updatedManken),
+                    success: function (data) {
+                        alert("Manken başarıyla güncellendi.");
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        alert("Manken güncellenirken bir hata oluştu.");
+                    }
+                });
+            });
+        });
+    </script>
+}

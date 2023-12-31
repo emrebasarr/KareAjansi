@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "Organizasyon Liste";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="container">
+    <section>
+        <div class="card">
+            <div class="card-header text-center">
+                <h1>Organizasyonlar Listesi</h1>
+                <input id="search"
+                       class="form-control"
+                       type="search"
+                       placeholder="Organizasyon Ara"
+                       aria-label="Search" />
+            </div>
+            <div class="card-body">
+                <div class="card-body">
+                    <div class="mb-3 text-center">
+                        <a class="btn btn-primary" href="/OrganizasyonSayfa/OrganizasyonEkle">Organizasyon Ekle</a>
+                    </div>
+                <table class="table table-hover" id="organizasyonTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ad</th>
+                            <th>BaslangicTarihi</th>
+                            <th>BitisTarihi</th>
+                            <th>Sehir</th>
+                            <th>Firma</th>
+                            <th>GunSayisi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="organizasyonTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+
+            function getAllOrganizasyonlar() {
+                $.ajax({
+                    url: "https://localhost:7254/api/Organizasyonlar/getallorganizasyonlar",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data);
+                        fillTableOrganizasyonData(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function getOrganizasyonBySearch(value) {
+                $.ajax({
+                    url: `https://localhost:7254/api/Organizasyonlar/searchOrganizasyon/${value}`,
+                    type: 'GET',
+                    success: function (data) {
+                        // Temizleme işlemi
+                        $("#organizasyonTableBody").empty();
+                        fillTableOrganizasyonData(data);
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            $("#search").on("input", function (e) {
+                const value = e.target.value;
+                getOrganizasyonBySearch(value);
+            });
+
+            function fillTableOrganizasyonData(organizasyonlar) {
+                const organizasyonTableBody = $("#organizasyonTableBody");
+                organizasyonlar.map(function (val, i) {
+                    const tr = `
+                            <tr>
+                                <td>${val.id}</td>
+                                <td>${val.ad}</td>
+                                <td>${val.baslangicTarihi}</td>
+                                <td>${val.bitisTarihi}</td>
+                                <td>${val.sehir}</td>
+                                <td>${val.firma}</td>
+                                <td>${val.gunSayisi}</td>
+                                <td>
+                                    <button class="btn btn-danger" onclick="deleteOrganizasyon(${val.id})">Sil</button>
+                                    <a class="btn btn-primary" href="/OrganizasyonSayfa/OrganizasyonGuncelle/${val.id}">Güncelle</a>
+                                </td>
+                            </tr>
+                        `;
+                    organizasyonTableBody.append(tr);
+                });
+            }
+            getAllOrganizasyonlar();
+
+            function deleteOrganizasyon(organizasyonId) {
+                if (confirm("Bu organizasyonu silmek istediğinizden emin misiniz?")) {
+                    $.ajax({
+                        url: `https://localhost:7254/api/Organizasyonlar/deleteorganizasyon/${organizasyonId}`,
+                        type: "DELETE",
+                        success: function (data) {
+                            console.log(data);
+                            // Silme işlemi başarılıysa, tabloyu yeniden doldurabilirsiniz
+                            getAllOrganizasyonlar();
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            alert("Organizasyon silme işlemi başarısız oldu.");
+                        }
+                    });
+                }
+            }
+    </script>
+}

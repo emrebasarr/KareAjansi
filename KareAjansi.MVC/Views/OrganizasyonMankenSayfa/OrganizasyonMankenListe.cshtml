@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "OrganizasyonMankenler Liste";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="container">
+    <section>
+        <div class="card">
+            <div class="card-header text-center">
+                <h1>Mankenler Listesi</h1>
+                <input id="search"
+                       class="form-control"
+                       type="search"
+                       placeholder="Ara"
+                       aria-label="Search" />
+            </div>
+            <div class="card-body">
+                <div class="mb-3 text-center">
+                    <a class="btn btn-primary" href="/OrganizasyonMankenSayfa/OrganizasyonMankenEkle">OrganizasyonManken Ekle</a>
+                </div>
+                <table class="table table-hover" id="mankenTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Organizasyon Id</th>
+                            <th>Manken Id</th>
+                            <th>Katilma Tarihi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="organizasyonMankenTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+            function getAllOrganizasyonMankenler() {
+                $.ajax({
+                    url: "https://localhost:7254/api/OrganizasyonMankenler/organizasyonmanken",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data);
+                        fillTableOrganizasyonMankenData(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function getOrganizasyonMankenBySearch(value) {
+                $.ajax({
+                    url: `https://localhost:7254/api/OrganizasyonMankenler/searchOrganizasyonManken/${value}`,
+                    type: 'GET',
+                    success: function (data) {
+                        // Temizleme işlemi
+                        $("#organizasyonMankenTableBody").empty();
+                        fillTableOrganizasyonMankenData(data);
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            $("#search").on("input", function (e) {
+                const value = e.target.value;
+                getOrganizasyonMankenBySearch(value);
+            });
+
+            function fillTableOrganizasyonMankenData(organizasyonManken) {
+                const organizasyonMankenTableBody = $("#organizasyonMankenTableBody");
+                organizasyonMankenTableBody.empty(); // Tabloyu temizle
+                organizasyonManken.forEach(function (val,i){
+                    const tr = `
+                                        <tr>
+                                            <td>${val.id}</td>
+                                            <td>${val.organizasyonId}</td>
+                                            <td>${val.mankenId}</td>
+                                            <td>${val.katilmaTarihi}</td>
+                                            <td>
+                                                <button class="btn btn-danger" onclick="deleteOrganizasyonManken(${val.id})">Sil</button>
+                                            </td>
+                                        </tr>
+                                    `;
+                    organizasyonMankenTableBody.append(tr);
+                });
+            }
+            getAllOrganizasyonMankenler();
+
+            function deleteOrganizasyonManken(id) {
+                if (confirm("Bu OrganizasyonManken silmek istediğinizden emin misiniz?")) {
+                    $.ajax({
+                        url: `https://localhost:7254/api/OrganizasyonMankenler/deleteorganizasyonmanken/${id}`,
+                        type: "DELETE",
+                        success: function (data) {
+                            console.log(data);
+                            getAllOrganizasyonMankenler();
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            alert("OrganizasyonManken silme işlemi başarısız oldu.");
+                        }
+                    });
+                }
+            }
+    </script>
+}
